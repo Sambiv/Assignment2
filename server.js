@@ -58,12 +58,12 @@ router.post('/signup', (req, res) => {
 router.post('/signin', (req, res) => {
     var user = db.findOne(req.body.username);
 
-    if (!user) {
+    if (!user) {                                          
         res.status(401).send({success: false, msg: 'Authentication failed. User not found.'});
     } else {
         if (req.body.password == user.password) {
             var userToken = { id: user.id, username: user.username };
-            var token = jwt.sign(userToken, process.env.UNIQUE_KEY);
+            var token = jwt.sign(userToken, process.env.SECRET_KEY);
             res.json ({success: true, token: 'JWT ' + token});
         }
         else {
@@ -96,55 +96,43 @@ router.route('/testcollection')
 
 router.route('/movies')
     .get((req, res) => {
-        
-         // Create JSON Object with Headers and Query from Request and the unique key
-         var o = getJSONObjectForMovieRequirement(req);
-
-         // Update Status and Message of Object
-         o.status = 200;
-         o.message = "GET movies";
- 
-         // Return JSON Object as Response
-         res.status(200).json(o);
-
+        //implement
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = "GET movies";
+        res.json(o);
     })
     .post((req, res) => {
-        
-        // Create JSON Object with Headers and Query from Request and the unique key
+        //implement
         var o = getJSONObjectForMovieRequirement(req);
-
-        // Update Status and Message of Object
-        o.status = 201;
+        o.status = 200;
         o.message = "movie saved";
-
-        // Return JSON Object as Response
-        res.status(201).json(o);
-
+        res.json(o);
     })
     .put(authJwtController.isAuthenticated, (req, res) => {
-        // HTTP PUT Method
-        // Requires JWT authentication.
-        // Returns a JSON object with status, message, headers, query, and env.
+        //http put method
+        //requires jwt auth
+        //returns a json object w status, msg, headers, query, env
         var o = getJSONObjectForMovieRequirement(req);
         o.status = 200;
         o.message = "movie updated";
-        res.status(200).json(o);
+        res.json(o);
     })
     .delete(authController.isAuthenticated, (req, res) => {
-        // HTTP DELETE Method
-        // Requires Basic authentication.
-        // Returns a JSON object with status, message, headers, query, and env.
+        //http delete method
+        //requires basic auth
+        //returns json object w status, msg, headers, query, env
         var o = getJSONObjectForMovieRequirement(req);
         o.status = 200;
         o.message = "movie deleted";
-        res.status(200).json(o);
+        res.json(o);
     })
     .all((req, res) => {
-        // Any other HTTP Method
-        // Returns a message stating that the HTTP method is unsupported.
-        res.status(405).send({ message: 'HTTP method not supported.' });
+        //any other http method
+        //returns a msg stating that the http method is unsupported
+        res.status(405).send({ message: 'HTTP method not supported.'})
     });
-    
+
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
